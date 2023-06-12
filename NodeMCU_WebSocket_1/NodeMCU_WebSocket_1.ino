@@ -30,7 +30,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length)
         // Verifique se a mensagem recebida pode ser convertida em um número inteiro
         if (receivedMessage.toInt() != 0 || receivedMessage == "0") {
           Serial.printf("%s\n", receivedMessage.c_str());
-          delay(10);
           mySerial.printf("%s\n", receivedMessage.c_str());
  
           // Envie uma resposta de volta para o cliente com a mensagem original

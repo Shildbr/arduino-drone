@@ -65,10 +65,6 @@ void setup() {
 void loop() {
   // Aguarde uma nova conexão do cliente
   webSocketServer.loop();
- 
   // Verifique se há dados disponíveis no dispositivo serial
-  while (mySerial.available()) {
-    int receivedByte = mySerial.read();
-    Serial.write(receivedByte); // Exibe o byte recebido no monitor serial
-  }
+
 }

@@ -27,12 +27,13 @@ float pid_p=0;
 float pid_i=0;
 float pid_d=0;
 /////////////////PID CONSTANTS/////////////////
-double kp=3.55;//3.55
-double ki=0.005;//0.003
-double kd=2.05;//2.05
+double kp=2.4;//3.55
+double ki=0.0;//0.003
+double kd=1.65;//2.05
 ///////////////////////////////////////////////
 
-double throttle=1300; //initial value of throttle to the motors
+int potpin = A0;
+double throttle; //initial value of throttle to the motors
 float desired_angle = 0; //This is the angle in which we whant the
                          //balance to stay steady
 
@@ -44,8 +45,8 @@ void setup() {
   Wire.write(0);
   Wire.endTransmission(true);
   Serial.begin(250000);
-  right_prop.attach(3); //attatch the right motor to pin 3
-  left_prop.attach(5);  //attatch the left motor to pin 5
+  right_prop.attach(7); //attatch the right motor to pin 3
+  left_prop.attach(6);  //attatch the left motor to pin 5
 
   time = millis(); //Start counting time in milliseconds
   /*In order to start up the ESCs we have to send a min value
@@ -153,7 +154,7 @@ the balance*/
 
 /*First calculate the error between the desired angle and 
 *the real measured angle*/
-error = Total_angle[1] - desired_angle;
+error = Total_angle[0] - desired_angle;
     
 /*Next the proportional value of the PID is just a proportional constant
 *multiplied by the error*/
@@ -195,8 +196,11 @@ if(PID > 1000)
 {
   PID=1000;
 }
-
+/*
+throttle = analogRead(potpin);  // Lê o valor do potenciômetro
+throttle = map(throttle, 0, 1023, 1000, 2000);  // Mapeia o valor lido para o intervalo de saída do servo
 /*Finnaly we calculate the PWM width. We sum the desired throttle and the PID value*/
+throttle = 1300;
 pwmLeft = throttle + PID;
 pwmRight = throttle - PID;
 
@@ -228,6 +232,21 @@ if(pwmLeft > 2000)
 width for each pulse*/
 left_prop.writeMicroseconds(pwmLeft);
 right_prop.writeMicroseconds(pwmRight);
+
+Serial.print("Input: ");
+  Serial.print(throttle);
+  Serial.print(" | ");
+  Serial.print("PID: ");
+  Serial.print(PID);
+  Serial.print(" | ");
+  Serial.print("Angulo: ");
+  Serial.print(Total_angle[0]);
+  Serial.print(" | ");
+  Serial.print("Output Motor 1: ");
+  Serial.print(pwmLeft);
+  Serial.print(" | ");
+  Serial.print("Output Motor 2: ");
+  Serial.println(pwmRight);
 previous_error = error; //Remember to store the previous error.
 
 }//end of loop void

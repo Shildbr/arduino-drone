@@ -1,33 +1,17 @@
-/*
-   -- New project --
-   
-   This source code of graphical user interface 
-   has been generated automatically by RemoteXY editor.
-   To compile this code using RemoteXY library 3.1.8 or later version 
-   download by link http://remotexy.com/en/library/
-   To connect using RemoteXY mobile app by link http://remotexy.com/en/download/                   
-     - for ANDROID 4.11.1 or later version;
-     - for iOS 1.9.1 or later version;
-    
-   This source code is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.    
-*/
+#include <SoftwareSerial.h>
 
-//////////////////////////////////////////////
-//        RemoteXY include library          //
-//////////////////////////////////////////////
+#include <Servo.h>
 
-// RemoteXY select connection mode and include library
+Servo esc;
+
 #define REMOTEXY_MODE__SOFTSERIAL
 #include <SoftwareSerial.h>
 
 #include <RemoteXY.h>
 
 // RemoteXY connection settings
-#define REMOTEXY_SERIAL_RX 10
-#define REMOTEXY_SERIAL_TX 11
+#define REMOTEXY_SERIAL_RX 13
+#define REMOTEXY_SERIAL_TX 12
 #define REMOTEXY_SERIAL_SPEED 9600
 #define motor 6
 
@@ -66,6 +50,11 @@ void setup() {
   Serial.begin(9600);
   pinMode(motor, OUTPUT);
   RemoteXY.joystick_1_y = -100;
+  esc.attach(motor);
+  esc.writeMicroseconds(1000);  // Velocidade mínima
+  delay(1000);
+  esc.writeMicroseconds(2000);  // Velocidade máxima
+  delay(1000);
 }
 
 void loop() {
@@ -74,8 +63,8 @@ void loop() {
 
   joystick_1_y = RemoteXY.joystick_1_y+100;
 
-  velocidade = joystick_1_y/2/ 100 * 255;
+  velocidade = joystick_1_y/2/ 100 * 1000 + 1000;
 
   Serial.println(velocidade);
-  analogWrite(motor, velocidade);
+  esc.writeMicroseconds(velocidade);
 }

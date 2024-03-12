@@ -1,5 +1,7 @@
+
 #include <MPU6050_tockn.h>
 #include <Servo.h>
+#include <Wire.h>
 
 extern void PIDcontrole();
 extern float PID;
@@ -8,8 +10,8 @@ float input = 1300;
 float outputMotor;
 float outputMotor2;
 
-#define Esc1 7 // Pino do servo motor 1 (controle do motor)
-#define Esc2 6 // Pino do servo motor 2 (controle do motor)
+#define Esc1 D1 // Pino do servo motor 1 (controle do motor)
+#define Esc2 D2 // Pino do servo motor 2 (controle do motor)
 
 Servo esc1;
 Servo esc2;
@@ -18,10 +20,13 @@ MPU6050 mpu6050(Wire);
 
 void setup() {
 
-  Wire.begin();
   Serial.begin(250000);
+
+  int SDA = D6;  // you can choose SDA pin
+  int SCL = D5;  // you can choose SCL pin
+  Wire.begin(SDA, SCL);
   mpu6050.begin();
-  mpu6050.calcGyroOffsets(false);
+  mpu6050.calcGyroOffsets(true);
 
   esc1.attach(Esc1);  // Anexa o servo motor 1 ao pino
   esc2.attach(Esc2);  // Anexa o servo motor 2 ao pino
@@ -29,7 +34,7 @@ void setup() {
   esc1.writeMicroseconds(1000);  // Define o sinal mínimo do servo motor 1
   esc2.writeMicroseconds(1000);  // Define o sinal mínimo do servo motor 2
 
-  delay(7000);
+  delay(1000);
 
   PIDcontrole();
 
@@ -37,6 +42,7 @@ void setup() {
 
 void loop() {
 
+  mpu6050.update();
   outputMotor = input - PID;   // Calcula o sinal de saída do motor 1
   outputMotor2 = input + PID;  // Calcula o sinal de saída do motor 2
 
@@ -58,14 +64,6 @@ void loop() {
 
   // Imprime informações no monitor serial
 
-  Serial.print("Input: ");
-  Serial.print(input);
-  Serial.print(" | ");
-  Serial.print("Output Motor 1: ");
-  Serial.print(outputMotor);
-  Serial.print(" | ");
-  Serial.print("Output Motor 2: ");
-  Serial.println(outputMotor2);
 
   // Controla os servo motores com os sinais calculados
   esc1.writeMicroseconds(outputMotor);

@@ -1,6 +1,6 @@
 #include <MPU6050_tockn.h>
 
-float time, elapsedTime, previousTime;
+float currentTime, elapsedTime, previousTime;
 float PID, error, previousError;
 float angleX, angleY, angleZ;
 
@@ -13,9 +13,11 @@ float desiredAngle = 0;
 
 void PIDcontrole() {
 
-  previousTime = time;
-  time = millis();
-  elapsedTime = (time-previousTime)/1000;
+  mpu6050.update();
+
+  previousTime = currentTime;
+  currentTime = millis();
+  elapsedTime = (currentTime - previousTime) / 1000.0;
 
   angleX = mpu6050.getAngleX();
   angleY = mpu6050.getAngleY();
@@ -24,19 +26,28 @@ void PIDcontrole() {
   error = angleX - desiredAngle;
   
   calcP = Kp*error;
-  if (-3<error<3) {
-  calcI = calcI+(Ki*error);
-  } calcD = Kd*((error-previousError)/elapsedTime);
+  if (-3<error && error<3) {
+    calcI = calcI+(Ki*error);
+  }
+  calcD = Kd*((error-previousError)/elapsedTime);
   PID = calcP+calcI+calcD;
 
-  if(PID <- 1000) {
-    PID =- 1000;
-  } if(PID > 1000) {
-    PID = 1000; }
+  if(PID < -1000) {
+    PID = -1000;
+  } 
+  if(PID > 1000) {
+    PID = 1000;
+  }
 
-  Serial.print("PID: ");
-  Serial.print(PID);
+
+  Serial.print(angleX);
   Serial.print(" | ");
+
+  Serial.print(angleY);
+  Serial.print(" | ");
+
+  Serial.print(angleZ);
+  Serial.println();
 
   previousError = error;
 

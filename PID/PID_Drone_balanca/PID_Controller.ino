@@ -7,7 +7,7 @@ float Gyro_angle[2];
 float Total_angle[2];
 
 float rad_to_deg = 180/3.141592654;
-float time, elapsedTime, previousTime;
+float currentTime, elapsedTime, previousTime;
 float PID, error, previousError;
 
 float Kp = 2.4;
@@ -19,9 +19,9 @@ float desiredAngle = 0;
 
 void PIDcontrole() {
 
-  previousTime = time;
-  time = millis();
-  elapsedTime = (time - previousTime) / 1000;
+  previousTime = currentTime;
+  currentTime = millis();
+  elapsedTime = (currentTime - previousTime) / 1000.0;
 
   Wire.beginTransmission(0x68);
   Wire.write(0x3B);

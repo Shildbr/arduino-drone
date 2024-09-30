@@ -16,6 +16,8 @@ Servo esc2;
 
 void setup() {
 
+  int SDA = D6;  // you can choose SDA pin
+  int SCL = D5;  // you can choose SCL pin
 
   Serial.begin(250000);    // Inicialização da comunicação serial
   esc1.attach(Esc1);  // Anexa o servo motor 1 ao pino

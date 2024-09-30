@@ -23,6 +23,7 @@ void PIDcontrole() {
   currentTime = millis();
   elapsedTime = (currentTime - previousTime) / 1000.0;
 
+  Wire.begin(SDA, SCL);
   Wire.beginTransmission(0x68);
   Wire.write(0x3B);
   Wire.endTransmission(false);

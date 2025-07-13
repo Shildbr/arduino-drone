@@ -1,24 +1,29 @@
 
 #include <Wire.h>
+#include <WebSocketsServer.h>
 #include <MPU6050_tockn.h>
 
+extern void setupWebSocket();
+extern void loopWebSocket();
+
+extern float kp, ki, kd;
 float currentTime, elapsedTime, previousTime;
 
 float PID_X, angleX, errorX, previousErrorX;
 float PID_Y, angleY, errorY, previousErrorY;
 float PID_Z, angleZ, errorZ, previousErrorZ;
 
-float Kp_X = 2; //2.4
+float Kp_X = 0; //2.4
 float Ki_X = 0; //0.003
 float Kd_X = 0; //3.65
 
-float Kp_Y = 2.4;
-float Ki_Y = 0.003;
-float Kd_Y = 3.65;
+float Kp_Y = 2;
+float Ki_Y = 0;
+float Kd_Y = 0;
 
-float Kp_Z = 2.4;
-float Ki_Z = 0.003;
-float Kd_Z = 3.65;
+float Kp_Z = 2;
+float Ki_Z = 0;
+float Kd_Z = 0;
 
 float calcP_X, calcI_X, calcD_X;
 float calcP_Y, calcI_Y, calcD_Y;
@@ -40,8 +45,11 @@ void PIDcontrole() {
 
   errorX = angleX - desiredAngle;
   errorY = angleY - desiredAngle;
-  errorZ = angleZ -desiredAngle;
+  errorZ = angleZ - desiredAngle;
 
+  Kp_X = kp; //2.4
+  Ki_X = ki; //0.003
+  Kd_X = kd; //3.65
 //########### PID_PITCH ###########
 
 // Cálculo do termo proporcional (P)
@@ -59,7 +67,7 @@ calcD_X = Kd_X * ((errorX - previousErrorX) / elapsedTime);
 PID_X = calcP_X + calcI_X + calcD_X;
 
 // Limitando o valor do PID entre -1000 e 1000
-PID_X = constrain(PID_X, 0, 1000);
+PID_X = constrain(PID_X, -1000, 1000);
 //########### PID_ROW ###########
 
 // Cálculo do termo proporcional (P)
@@ -77,7 +85,7 @@ calcD_Y = Kd_Y * ((errorY - previousErrorY) / elapsedTime);
 PID_Y = calcP_Y + calcI_Y + calcD_Y;
 
 // Limitando o valor do PID entre -1000 e 1000
-PID_Y = constrain(PID_Y, 0, 1000);
+PID_Y = constrain(PID_Y, -1000, 1000);
 //########### PID_YAW ###########
 
 // Cálculo do termo proporcional (P)
@@ -95,17 +103,21 @@ calcD_Z = Kd_Z * ((errorZ - previousErrorZ) / elapsedTime);
 PID_Z = calcP_Z + calcI_Z + calcD_Z;
 
 // Limitando o valor do PID entre -1000 e 1000
-PID_Z = constrain(PID_Z, 0, 1000);
-
+PID_Z = constrain(PID_Z, -1000, 1000);
+/*
   Serial.print("PID_X: ");
-  Serial.print(angleX);
+  Serial.println(angleX);
   Serial.print(" | ");
   Serial.print("PID_Y: ");
   Serial.print(angleY);
   Serial.print(" | ");
   Serial.print("PID_Z: ");
-  Serial.println(angleZ);
+  Serial.print(angleZ);
 
+Serial.printf(" | Kp: %.2f", kp);
+Serial.printf(" | Ki: %.2f", ki);
+Serial.printf(" | Kd: %.2f\n", kd);
+*/
   previousErrorX = errorX;
   previousErrorY = errorY;
   previousErrorZ = errorZ;

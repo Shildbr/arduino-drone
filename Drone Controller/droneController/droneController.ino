@@ -11,16 +11,17 @@ extern void loopWebSocket();
 extern float PID_X;
 extern float PID_Y;
 extern float PID_Z;
+extern float inputReceived;
 
-float input = 1200;
+float input;
 float outputMotor_left_front;
 float outputMotor_right_front;
 float outputMotor_left_rear;
 float outputMotor_right_rear;
 
-#define Esc1 D7
-#define Esc2 D8
-#define Esc3 D2
+#define Esc1 D8
+#define Esc2 D2
+#define Esc3 D7
 #define Esc4 D1
 
 Servo esc1;
@@ -43,6 +44,13 @@ void setup() {
   esc3.attach(Esc3);
   esc4.attach(Esc4);
 
+  esc1.writeMicroseconds(2000);
+  esc2.writeMicroseconds(2000);
+  esc3.writeMicroseconds(2000);
+  esc4.writeMicroseconds(2000);
+
+  delay(2000);
+
   esc1.writeMicroseconds(1000);
   esc2.writeMicroseconds(1000);
   esc3.writeMicroseconds(1000);
@@ -50,22 +58,18 @@ void setup() {
 
   delay(1000);
 
-  esc1.writeMicroseconds(2000);
-  esc2.writeMicroseconds(2000);
-  esc3.writeMicroseconds(2000);
-  esc4.writeMicroseconds(2000);
-
-  delay(1000);
-
   PIDcontrole();
-//  setupWebSocket();
+  setupWebSocket();
 }
 
 void loop() {
-  outputMotor_left_front = input - PID_X;
-  outputMotor_right_front = input + PID_X;
-  outputMotor_left_rear = input - PID_X;
-  outputMotor_right_rear = input + PID_X;
+
+  input = map(inputReceived, 0, 200, 1000, 2000);
+
+  outputMotor_left_front = input - PID_X + PID_Y ;
+  outputMotor_right_front = input - PID_X - PID_Y;
+  outputMotor_left_rear = input - PID_X - PID_Y;
+  outputMotor_right_rear = input + PID_X - PID_Y;
 
   outputMotor_left_front = constrain(outputMotor_left_front, 1000, 2000);
   outputMotor_right_front = constrain(outputMotor_right_front, 1000, 2000);
@@ -77,6 +81,12 @@ void loop() {
   esc3.writeMicroseconds(outputMotor_left_rear);
   esc4.writeMicroseconds(outputMotor_right_rear);
 
+  Serial.print("Right Rear Motor ");
+  Serial.print(outputMotor_right_rear);
+  Serial.print(" | Right Front Motor ");
+  Serial.print(outputMotor_right_front);
+  Serial.println(" ");
+  
   PIDcontrole();
-//  loopWebSocket();
+  loopWebSocket();
 }

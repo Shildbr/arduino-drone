@@ -12,6 +12,7 @@ extern float PID_X;
 extern float PID_Y;
 extern float PID_Z;
 extern float inputReceived;
+extern float kp, ki, kd;
 
 float input;
 float outputMotor_left_front;
@@ -81,12 +82,19 @@ void loop() {
   esc3.writeMicroseconds(outputMotor_left_rear);
   esc4.writeMicroseconds(outputMotor_right_rear);
 
-  Serial.print("Right Rear Motor ");
+  Serial.print("Motor 1 ");
   Serial.print(outputMotor_right_rear);
-  Serial.print(" | Right Front Motor ");
+  Serial.print(" | Motor 2 ");
   Serial.print(outputMotor_right_front);
-  Serial.println(" ");
-  
+  Serial.print(" | KP ");
+  Serial.print(kp);
+  Serial.print(" | KI ");
+  Serial.print(ki);
+  Serial.print(" | KD ");
+  Serial.print(kd);
+  Serial.print(" PID X ");
+  Serial.println(PID_X);
+
   PIDcontrole();
   loopWebSocket();
 }

@@ -17,11 +17,11 @@ float Kp_X = 0; //2.4
 float Ki_X = 0; //0.003
 float Kd_X = 0; //3.65
 
-float Kp_Y = 2;
+float Kp_Y = 0;
 float Ki_Y = 0;
 float Kd_Y = 0;
 
-float Kp_Z = 2;
+float Kp_Z = 0;
 float Ki_Z = 0;
 float Kd_Z = 0;
 
